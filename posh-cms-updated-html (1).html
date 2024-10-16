@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSH CMS - Create New Case</title>
+    <style>
+        /* ... (previous styles) ... */
+        .form-container {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>POSH CMS</h1>
+    </header>
+    <div class="container">
+        <div class="left-section">
+            <div class="tabs">
+                <div class="tab active">Create New Case</div>
+            </div>
+            <div class="form-container">
+                <form id="createCaseForm">
+                    <div class="form-field">
+                        <label for="complaint_datetime">Date & Time of Complaint:</label>
+                        <input type="datetime-local" id="complaint_datetime" name="complaint_datetime" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="acknowledged_within_3_hours">Acknowledged within 3 hours:</label>
+                        <select id="acknowledged_within_3_hours" name="acknowledged_within_3_hours" required>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="priority">Set Priority:</label>
+                        <select id="priority" name="priority" required>
+                            <option value="P0">P0</option>
+                            <option value="P1">P1</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="initial_meeting_date">Initial Meeting Date:</label>
+                        <input type="date" id="initial_meeting_date" name="initial_meeting_date" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="meeting_completed_within_48_hours">Meeting completed within 48 hours:</label>
+                        <select id="meeting_completed_within_48_hours" name="meeting_completed_within_48_hours" required>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="meeting_recorded">Meeting recorded:</label>
+                        <select id="meeting_recorded" name="meeting_recorded" required>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="meeting_not_recorded_reason">Reason if not recorded:</label>
+                        <input type="text" id="meeting_not_recorded_reason" name="meeting_not_recorded_reason">
+                    </div>
+                    <!-- Add the rest of the form fields here, following the same pattern -->
+                    <div class="form-field">
+                        <button type="submit">Create Case</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="case-id">
+                Case ID: (Will be generated)
+            </div>
+            <div class="info-box">
+                <p>Fill out the form to create a new POSH case.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#createCaseForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                let formData = {
+                    complaint_datetime: $('#complaint_datetime').val(),
+                    acknowledged_within_3_hours: $('#acknowledged_within_3_hours').val() === 'true',
+                    priority: $('#priority').val(),
+                    initial_meeting_date: $('#initial_meeting_date').val(),
+                    meeting_completed_within_48_hours: $('#meeting_completed_within_48_hours').val() === 'true',
+                    meeting_recorded: $('#meeting_recorded').val() === 'true',
+                    meeting_not_recorded_reason: $('#meeting_not_recorded_reason').val(),
+                    // Add the rest of the form fields here
+                };
+
+                $.ajax({
+                    url: '/api/create-case',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('New POSH case created successfully. Case ID: ' + response.caseId);
+                        $('.case-id').text('Case ID: ' + response.caseId);
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error creating case: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
